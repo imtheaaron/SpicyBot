@@ -1,1 +1,1 @@
-worker: python spicybot.py
+worker: python ChatterBot.py
