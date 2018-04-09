@@ -30,13 +30,14 @@ n_tweets = 500
 
 while running == 0:
     #set some initial local variables
-    search_name = ''
+    search_name = '.'
     already_searched = False
-    text_list = []
+    text_list = [0,0]
     
     #do a search (we're going to search for only the most recent item)
     print('looking for tweets')
-    tweet_search = api.search(q=botname, since_id=search_id, parser=tweepy.parsers.JSONParser(), count=1)
+    tweet_search = api.search(q=botname, since_id=search_id, parser=tweepy.parsers.JSONParser(), 
+                                  count=1)
     try:
         search_id = tweet_search['statuses'][0]['id']
         tweet_text = tweet_search['statuses'][0]['text']
@@ -60,14 +61,13 @@ while running == 0:
 #check to see if that account has been analyzed before - tweet either "analyzing" or "sorry, we've already
 #done an analysis on that account"
 
-    if search_name[0] == '@':
-        print('searching to see if the user has been analyzed')
-        for user in previous_analysis:
-            if user == search_name:
-                print('Sorry, that account has already been analyzed.')
-                api.update_status('Sorry, that account has already been analyzed.')
-                already_searched = True
-
+        if search_name[0] == '@':
+            print('searching to see if the user has been analyzed')
+            for user in previous_analysis:
+                if user == search_name:
+                    print('Sorry, that account has already been analyzed.')
+                    api.update_status('Sorry, that account has already been analyzed.')
+                    already_searched = True     
         
 #pull 500 tweets from the account and use Vader to analyze while looping through them.
 #create a list with "tweets ago" which can be just x from each loop - subtracting 1 for each loop.    
@@ -132,3 +132,4 @@ while running == 0:
     
     print('waiting 5 minutes')
     time.sleep(300)
+
