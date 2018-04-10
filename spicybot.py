@@ -1,5 +1,5 @@
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+matplotlib.use('Agg')
 import seaborn as sns
 import tweepy
 import pandas as pd
