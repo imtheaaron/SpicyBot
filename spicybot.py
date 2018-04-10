@@ -127,7 +127,7 @@ while running == 0:
 
 #tweet out the resultant graph
                 try:
-                    api.update_with_media(figname, status=f"Here's the completed analysis for {print_name}.")
+                    api.update_with_media(figname, status=f"Hey {requestor_name}, here's the completed analysis for {print_name}.")
                     print('tweeting out the result')
                 except:
                     print('we got blocked from sending out an automated tweet.')
