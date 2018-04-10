@@ -85,50 +85,55 @@ while running == 0:
             
             x = 0
 
-            for status in tweepy.Cursor(api.user_timeline, id=search_name).items(n_tweets):
-                tweet = status._json
-                tweets_ago = x
-                x = x-1
-                results = analyzer.polarity_scores(tweet["text"])
-                compound = results["compound"]
-                compound_list.append(compound)
-                tweets_ago_list.append(tweets_ago)
+            try:
+                
+                for status in tweepy.Cursor(api.user_timeline, id=search_name).items(n_tweets):
+                    tweet = status._json
+                    tweets_ago = x
+                    x = x-1
+                    results = analyzer.polarity_scores(tweet["text"])
+                    compound = results["compound"]
+                    compound_list.append(compound)
+                    tweets_ago_list.append(tweets_ago)
 
-            df = pd.DataFrame({
-                'Tweet Polarity': compound_list,
-                'Tweets Ago': tweets_ago_list
-                })   
-            df = df.sort_values(by='Tweets Ago', ascending=True)
+                df = pd.DataFrame({
+                    'Tweet Polarity': compound_list,
+                    'Tweets Ago': tweets_ago_list
+                    })   
+                df = df.sort_values(by='Tweets Ago', ascending=True)
 
 
 #graph the results and format the graph with the date pulled (which is the current date - we should be able to get the date
 #from the request tweet asking for analysis)
 #include the name of the analyzed account in the graph as part of the title (use a f string f"string text {variable})
-            sns.set()
-            
-            #create a random color for the graph
-            color_number = random.randint(0,6)
-            colors = ['blue', 'red', 'magenta', 'orange', 'yellow', 'green', 'brown']
-            
-            fig = plt.figure()
-            plt.scatter(x=df['Tweets Ago'], y=df['Tweet Polarity'], facecolor=colors[color_number], color='k', alpha=0.6)
-            plt.title(f'Sentiment Analysis of {search_name} Tweets ({request_date[0]} {request_date[1]} {request_date[2]})')
-            #note: I'm using the request date for the date because when the bot is running it will operate on recent requests only.
-            plt.xlabel('Tweets Ago')
-            plt.ylabel('Tweet Polarity')
-            plt.show()
+                sns.set()
+                
+                #create a random color for the graph
+                color_number = random.randint(0,6)
+                colors = ['blue', 'red', 'magenta', 'orange', 'yellow', 'green', 'brown']
+                
+                fig = plt.figure()
+                plt.scatter(x=df['Tweets Ago'], y=df['Tweet Polarity'], facecolor=colors[color_number], color='k', alpha=0.6)
+                plt.title(f'Sentiment Analysis of {search_name} Tweets ({request_date[0]} {request_date[1]} {request_date[2]})')
+                #note: I'm using the request date for the date because when the bot is running it will operate on recent requests only.
+                plt.xlabel('Tweets Ago')
+                plt.ylabel('Tweet Polarity')
+                plt.show()
 
-            figname = f'plot_{search_name}.png'
+                figname = f'plot_{search_name}.png'
 
-            fig.savefig(figname)
+                fig.savefig(figname)
 
 
 #tweet out the resultant graph
-            try:
-                api.update_with_media(figname, status=f"Here's the completed analysis for {print_name}.")
-                print('tweeting out the result')
+                try:
+                    api.update_with_media(figname, status=f"Here's the completed analysis for {print_name}.")
+                    print('tweeting out the result')
+                except:
+                    print('we got blocked from sending out an automated tweet.')
+
             except:
-                print('we got blocked from sending out an automated tweet.')
+                print('It looks like the account name does not exist.')
     
     print('waiting 5 minutes')
     time.sleep(300)
